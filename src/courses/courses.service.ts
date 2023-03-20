@@ -7,79 +7,77 @@ import { Tag } from './entities/tag.entity';
 
 @Injectable()
 export class CoursesService {
-	constructor(
-		@Inject('COURSES_REPOSITORY')
-		private readonly courseRepository: Repository<Course>,
+    @Inject('COURSES_REPOSITORY')
+    private readonly courseRepository: Repository<Course>;
 
-		@Inject('TAGS_REPOSITORY')
-		private readonly tagRepository: Repository<Tag>,
-	) {}
+    @Inject('TAGS_REPOSITORY')
+    private readonly tagRepository: Repository<Tag>;
 
-	async findAll() {
-		const courses = await this.courseRepository.find({
-			relations: ['tags'],
-		});
-		return courses;
-	}
+    async findAll() {
+        const courses = await this.courseRepository.find({
+            relations: ['tags'],
+        });
+        return courses;
+    }
 
-	async findOne(id: number) {
-		const course = await this.courseRepository.findOne({
-			where: { id },
-			relations: ['tags'],
-		});
-		if (!course) {
-			throw new NotFoundException(`Course #${id} not found`);
-		}
-		return course;
-	}
+    async findOne(id: string) {
+        const course = await this.courseRepository.findOne({
+            where: { id },
+            relations: ['tags'],
+        });
+        if (!course) {
+            throw new NotFoundException(`Course #${id} not found`);
+        }
+        return course;
+    }
 
-	async create(createCourseDto: CreateCourseDto) {
-		const tags = await Promise.all(
-			createCourseDto.tags.map((name) => this.preloadTagByName(name)),
-		);
+    async create(createCourseDto: CreateCourseDto) {
+        const tags = await Promise.all(
+            createCourseDto.tags.map((name) => this.preloadTagByName(name)),
+        );
 
-		const course = this.courseRepository.create({
-			...createCourseDto,
-			tags,
-		});
-		return this.courseRepository.save(course);
-	}
+        const course = this.courseRepository.create({
+            ...createCourseDto,
+            tags,
+        });
+        return this.courseRepository.save(course);
+    }
 
-	async update(id: number, updateCourseDto: UpdateCourseDto) {
-		const tags: Tag[] =
-			updateCourseDto.tags &&
-			(await Promise.all(
-				updateCourseDto.tags.map((name) => this.preloadTagByName(name)),
-		));
-		const course = await this.courseRepository.preload({
-			id: id,
-			...updateCourseDto,
-			tags,
-		});
+    async update(id: string, updateCourseDto: UpdateCourseDto) {
+        const tags: Tag[] =
+            updateCourseDto.tags &&
+            (await Promise.all(
+                updateCourseDto.tags.map((name) => this.preloadTagByName(name)),
+            ));
+        const course = await this.courseRepository.preload({
+            id: id,
+            ...updateCourseDto,
+            tags,
+        });
 
-		if (!course) {
-			throw new NotFoundException(`Course id ${id} not found`);
-		}
-		return this.courseRepository.save(course);
-	}
+        if (!course) {
+            throw new NotFoundException(`Course id ${id} not found`);
+        }
+        return this.courseRepository.save(course);
+    }
 
-	async remove(id: number) {
-		const course = await this.courseRepository.findOne({ where: { id } });
+    async remove(id: string) {
+        const course = await this.courseRepository.findOne({ where: { id } });
 
-		if (!course) {
-			throw new NotFoundException(`Course id ${id} not found`);
-		}
+        if (!course) {
+            throw new NotFoundException(`Course id ${id} not found`);
+        }
 
-		return this.courseRepository.remove(course);
-	}
+        return this.courseRepository.remove(course);
+    }
 
-	private async preloadTagByName(name: string): Promise<Tag> {
-		const tag = await this.tagRepository.findOne({ where: { name: name } });
+    private async preloadTagByName(name: string): Promise<Tag> {
+        const tag = await this.tagRepository.findOne({ where: { name: name } });
 
-		if (tag) {
-			return tag;
-		}
+        if (tag) {
+            return tag;
+        }
 
-		return this.tagRepository.create({ name });
-	}
+        return this.tagRepository.create({ name });
+    }
 }

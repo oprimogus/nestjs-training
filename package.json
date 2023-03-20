@@ -19,7 +19,9 @@
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "typeorm": "npm run build && npx typeorm -d dist/database.provider.js",
+    "typeorm2": "npm run build && npx typeorm",
     "migrate:generate": "npm run typeorm -- migration:generate",
+    "migrate:create": "npm run typeorm2 -- migration:create",
     "migrate:run": "npm run typeorm -- migration:run",
     "migrate:revert": "npm run typeorm -- migration:revert"
   },
@@ -35,7 +37,8 @@
     "pg": "^8.10.0",
     "reflect-metadata": "^0.1.13",
     "rxjs": "^7.2.0",
-    "typeorm": "^0.3.12"
+    "typeorm": "^0.3.12",
+    "uuid": "^9.0.0"
   },
   "devDependencies": {
     "@babel/eslint-parser": "^7.19.1",
@@ -46,6 +49,7 @@
     "@types/jest": "29.2.4",
     "@types/node": "18.11.18",
     "@types/supertest": "^2.0.11",
+    "@types/uuid": "^9.0.1",
     "@typescript-eslint/eslint-plugin": "^5.0.0",
     "@typescript-eslint/parser": "^5.0.0",
     "eslint": "^8.36.0",

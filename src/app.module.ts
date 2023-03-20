@@ -3,20 +3,17 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { CoursesModule } from './courses/courses.module';
 import { DatabaseModule } from './database/database.module';
-import { ConfigModule, ConfigService } from '@nestjs/config';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
-	imports: [
-		ConfigModule.forRoot({
-			isGlobal: true,
-			envFilePath: '.env',
-		}),
-		CoursesModule,
-		DatabaseModule,
-	],
-	controllers: [AppController],
-	providers: [AppService],
+    imports: [
+        ConfigModule.forRoot({
+            isGlobal: true,
+        }),
+        CoursesModule,
+        DatabaseModule,
+    ],
+    controllers: [AppController],
+    providers: [AppService],
 })
-export class AppModule {
-	constructor(private readonly configService: ConfigService) {}
-}
+export class AppModule {}
